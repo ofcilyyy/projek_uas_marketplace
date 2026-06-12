@@ -30,6 +30,11 @@ class Marketplace:
 
     # 2. Transaksi & Keranjang (Customer)
     def add_to_cart(self, customer, product_id):
+        # VALIDASI: Memastikan objek user memiliki atribut cart
+        if not hasattr(customer, 'cart'):
+            print("[KERANJANG] Role Admin tidak memiliki keranjang belanja!")
+            return
+
         for prod in self.products:
             if prod.product_id == product_id:
                 customer.cart.append(prod)
@@ -38,6 +43,11 @@ class Marketplace:
         print("[KERANJANG] Produk tidak ditemukan.")
 
     def checkout(self, customer):
+        # VALIDASI: Memastikan objek user memiliki atribut cart
+        if not hasattr(customer, 'cart'):
+            print("[CHECKOUT] Gagal, user tidak memiliki akses keranjang.")
+            return None
+
         if not customer.cart:
             print("[CHECKOUT] Keranjang belanja kosong!")
             return None
@@ -49,6 +59,20 @@ class Marketplace:
         print("[CHECKOUT] Berhasil membuat pesanan baru!")
         return new_order
 
+    # === TAMBAHKAN FUNGSI BARU INI ===
+    def view_all_orders(self):
+        """
+        Fungsi tambahan untuk Admin agar bisa memantau semua pesanan masuk,
+        termasuk pesanan yang sukses maupun yang dibatalkan.
+        """
+        print("\n--- RIWAYAT PESANAN MARKETPLACE ---")
+        if not self.orders:
+            print("(Belum ada transaksi di marketplace)")
+            return
+        
+        for order in self.orders:
+            print(f"ID: #{order.order_id} | Pelanggan: {order.customer.username} | Status: {order.status}")
+
     # 3. Penerapan Polymorphism & Subtyping
     def authenticate_user(self, user: User, password_input):
         """
@@ -56,4 +80,3 @@ class Marketplace:
         namun menjalankan method login() spesifik milik Admin atau Customer.
         """
         return user.login(password_input)
-    
